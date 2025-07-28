@@ -6,7 +6,7 @@ Interactive chat interface for CSV data analysis
 import os
 import sys
 from dotenv import load_dotenv
-from agents.workflow import ask_csv_question
+from agents.workflow import ask_question
 from tools.csv_tools import CSVAnalyzer
 
 load_dotenv()
@@ -63,7 +63,7 @@ def interactive_chat(csv_file):
             # Special commands
             if question.lower() == 'help':
                 print("\n💡 Try asking questions like:")
-                print("   • 'What universities are in this data?'")
+                print("   • 'What is the graduation rate for Asian women at New Jersey Institute of Technology in 2020?'")
                 print("   • 'What years does this cover?'")
                 print("   • 'Show me graduation rates by gender'")
                 print("   • 'Which university has the highest enrollment?'")
@@ -77,7 +77,7 @@ def interactive_chat(csv_file):
             print("🤔 Thinking...")
             
             try:
-                answer = ask_csv_question(question, csv_file)
+                answer = ask_question(question, csv_file)
                 print(f"\n🤖 Answer: {answer}")
                 
             except Exception as e:
