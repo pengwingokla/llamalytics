@@ -19,7 +19,7 @@ mcp-demo/
 ├── tests/                 # Test suites
 │   └── test_csv_agents.py # Comprehensive test suite
 ├── data/                  # CSV data files
-│   └── sample_data.csv    # Sample dataset
+│   └── NJ_graduation_data.csv    # New Jersey graduation dataset
 └── requirements.txt       # Dependencies
 ```
 
@@ -48,9 +48,9 @@ mcp-demo/
 
 ### Direct Agent Usage
 ```python
-from agents.csv_workflow import ask_csv_question
+from agents.workflow import ask_question
 
-answer = ask_csv_question("What's the average salary by department?", "data/sample_data.csv")
+answer = ask_question("What is the graduation rate for Asian women at New Jersey Institute of Technology in 2020?", "data/NJ_graduation_data.csv")
 print(answer)
 ```
 
@@ -61,11 +61,11 @@ python servers/csv_mcp_server.py
 
 ## 📊 Features
 
-- **AI-Powered Analysis:** Natural language questions about CSV data
-- **Multi-Agent Workflow:** File management → Question classification → Data analysis → Response synthesis
-- **Local & Free:** Uses Ollama models (no API costs)
-- **MCP Integration:** Expose capabilities via Model Context Protocol
-- **Pandas Backend:** Robust data analysis operations
+- **AI-Powered Analysis:** Natural language questions about graduation and enrollment data
+- **Multi-Agent Workflow:** File management → Intent classification → Data analysis → Response synthesis
+- **Local & Free:** Uses Ollama/Llama 3.2 models (no API costs)
+- **Advanced Filtering:** Complex demographic and institutional queries
+- **Pandas Backend:** Robust statistical and aggregation operations
 
 ## 🔧 Components
 
@@ -76,11 +76,23 @@ python servers/csv_mcp_server.py
 
 ## 📝 Example Questions
 
-- "What's the overview of this dataset?"
-- "What's the average salary by department?"
-- "Find employees with high salaries"
-- "Show me unique cities in the data"
-- "Who are the most experienced employees?"
+### Simple Operations
+- "What's the overview of this graduation dataset?"
+- "What years are available in the data?"
+- "Show me New Jersey Institute of Technology data"
+- "What universities are included in this dataset?"
+
+### Complex Queries
+- "What is the graduation rate for Asian women at New Jersey Institute of Technology in 2020?"
+- "Show total enrollment for Rutgers University in 2019"
+- "Find institutions with more than 1000 total students"
+- "What is the average total enrollment by year?"
+
+### Demographic Analysis
+- "Compare Asian men vs Asian women enrollment across all schools"
+- "Which cohort types are in the data?"
+- "Show graduation rates for Hispanic students in 2020"
+- "What's the enrollment breakdown by race at Princeton University?"
 
 ## 🧪 Testing
 
