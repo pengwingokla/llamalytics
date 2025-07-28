@@ -1,0 +1,7 @@
+langgraph==0.5.4
+anthropic==0.59.0
+pandas==2.3.1
+sqlalchemy==2.0.41
+mcp>=1.0.0
+python-dotenv==1.1.1
+ollama==0.5.1
