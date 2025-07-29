@@ -118,6 +118,9 @@ dmypy.json
 *.swo
 *~
 
+# data
+data/
+*.csv
+
 # OS
 .DS_Store
-Thumbs.dbdata/NJ_graduation_data.csv
