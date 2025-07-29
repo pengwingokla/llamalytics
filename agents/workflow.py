@@ -363,32 +363,3 @@ def ask_question(question: str, csv_file: str = None, model_name: str = "llama3.
             return msg.content
     
     return "No response generated"
-
-
-if __name__ == "__main__":
-    # Test the workflow
-    csv_file = "sample_data.csv"
-    
-    # Create sample data if it doesn't exist
-    if not os.path.exists(csv_file):
-        from tools.csv_tools import create_sample_csv
-        create_sample_csv(csv_file)
-    
-    print("=== CSV Q&A Workflow ===")
-    
-    # Test questions
-    questions = [
-        "What's the overview of this dataset?",
-        "What's the average salary by department?",
-        "Find people with high salaries",
-        "Show me unique cities in the data"
-    ]
-    
-    for question in questions:
-        print(f"\nQ: {question}")
-        try:
-            answer = ask_csv_question(question, csv_file)
-            print(f"A: {answer}")
-        except Exception as e:
-            print(f"Error: {e}")
-        print("-" * 50)
