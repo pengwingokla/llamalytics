@@ -8,9 +8,11 @@ import ollama
 import json
 from tools.csv_tools import CSVAnalyzer
 from .prompt import INTENT_CLASSIFIER_PROMPT, SYNTHESIS_PROMPT
+from .subagents import MultiAgentIntentClassifier
 
 load_dotenv()
 
+MODEL_NAME = "llama3.2"
 
 class WorkflowState(TypedDict):
     messages: Annotated[list[BaseMessage], add_messages]
@@ -20,7 +22,7 @@ class WorkflowState(TypedDict):
     context: str
 
 
-def create_csv_qa_workflow(model_name: str = "llama3.2"):
+def create_csv_qa_workflow(model_name: str = MODEL_NAME):
     """Create a comprehensive CSV Q&A workflow with multiple agents"""
     
     def file_manager_node(state: WorkflowState):
@@ -73,7 +75,7 @@ def create_csv_qa_workflow(model_name: str = "llama3.2"):
         }
     
     def intent_classifier_node(state: WorkflowState):
-        """Intelligent intent classifier that determines specific tools and parameters needed"""
+        """Multi-agent intent classifier using specialized subagents"""
         messages = state["messages"]
         current_csv = state.get("current_csv")
         user_question = ""
@@ -90,33 +92,26 @@ def create_csv_qa_workflow(model_name: str = "llama3.2"):
                 "context": state.get("context", "")
             }
         
-        # Get basic CSV info for context
-        csv_context = ""
+        # Get CSV columns for analysis
+        csv_columns = []
         if current_csv and os.path.exists(current_csv):
             try:
                 analyzer = CSVAnalyzer(current_csv)
-                csv_context = f"CSV columns: {', '.join(analyzer.df.columns)}"
+                csv_columns = list(analyzer.df.columns)
             except:
-                csv_context = "CSV structure unknown"
-        
-        intent_prompt = INTENT_CLASSIFIER_PROMPT.format(
-            user_question=user_question,
-            csv_context=csv_context
-        )
+                csv_columns = []
         
         try:
-            response = ollama.chat(
-                model=model_name,
-                messages=[
-                    {'role': 'user', 'content': intent_prompt}
-                ]
-            )
+            # Use the new multi-agent classifier
+            classifier = MultiAgentIntentClassifier(model_name)
+            intent_analysis = classifier.classify_intent(user_question, csv_columns)
             
-            intent_analysis = response['message']['content']
+            # Convert to JSON string for compatibility with existing workflow
+            intent_json = json.dumps(intent_analysis, indent=2)
             
             return {
-                "messages": [AIMessage(content=f"Intent Analysis: {intent_analysis}")],
-                "context": state.get("context", "") + f" | Intent: {intent_analysis}"
+                "messages": [AIMessage(content=f"Intent Analysis: {intent_json}")],
+                "context": state.get("context", "") + f" | Intent: {intent_analysis.get('intent', 'Unknown')}"
             }
             
         except Exception as e:
@@ -320,7 +315,7 @@ def create_csv_qa_workflow(model_name: str = "llama3.2"):
     return workflow.compile()
 
 
-def ask_question(question: str, csv_file: str = None, model_name: str = "llama3.2", raw_results: bool = False):
+def ask_question(question: str, csv_file: str = None, model_name: str = MODEL_NAME, raw_results: bool = False):
     """Ask a question about CSV data using the full workflow"""
     
     workflow = create_csv_qa_workflow(model_name)
